@@ -9,6 +9,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Locale;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 import static org.junit.Assert.*;
 
@@ -85,4 +87,42 @@ public class AppTest {
         assertTrue(ClassWithLambdaArgument.checkPredicate(IntPredicate::isEven, a));
         assertFalse(ClassWithLambdaArgument.checkPredicate(IntPredicate::isPrime, a));
     }
+
+    @Test
+    public void testPredefinedPredicate() {
+        String input1 = "contains some spaces";
+        String input2 = "DoNotContainsAnySpace";
+        Predicate<String> containsSpaces = x -> x.contains(" ");
+        assertTrue(containsSpaces.test(input1));
+        assertFalse(containsSpaces.test(input2));
+
+        int a = 12;
+        int b = 13;
+        Predicate<Integer> isMultipleOfTwo = x -> (x % 2) == 0;
+        assertTrue(isMultipleOfTwo.test(a));
+        assertFalse(isMultipleOfTwo.test(b));
+    }
+
+    @Test
+    public void testUnaryOperator(){
+        String input1 = "Contains Some Spaces";
+
+        UnaryOperator<String> deleteSpaces = x -> x.replace(" ", "");
+        UnaryOperator<String> changeSizes = x -> {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < x.length(); i++) {
+                if (Character.isUpperCase(x.charAt(i))) {
+                    result.append(Character.toLowerCase(x.charAt(i)));
+                } else {
+                    result.append(Character.toUpperCase(x.charAt(i)));
+                }
+            }
+            return result.toString();
+        };
+
+        Assert.assertEquals("ContainsSomeSpaces" , deleteSpaces.apply(input1));
+        Assert.assertEquals("cONTAINS sOME sPACES" , changeSizes.apply(input1));
+
+    }
+
 }
